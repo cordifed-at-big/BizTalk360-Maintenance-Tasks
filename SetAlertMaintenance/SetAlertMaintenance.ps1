@@ -15,8 +15,38 @@ $ResponseSet = Invoke-RestMethod -Uri "$BizTalk360ServerUrl/BizTalk360/Services.
 $ResponseSet | out-string
 $BizTalk360Version = $ResponseSet.bizTalk360Info.biztalk360Version
 
+## Between BizTalk360 11.6 and 11.7 a breaking change was done in the API
+if ([Version]$BizTalk360Version -ge [Version]'11.7')
+{
+    $Request = '{
+      "context": {
+        "callerReference": "AzureDevOps",
+        "environmentSettings": {
+          "id": "' + $BizTalk360EnvironmentId + '"
+        }
+      },
+      "alertMaintenance": {
+        "name": "BizTalk Deploy",
+        "comment": "BizTalk Deploy",
+        "maintenanceStartTime": "' + $DateTime.ToString("yyyy-MM-ddTHH:mm:ss.000") + '",
+        "expiryDateTime": "' + $DateTime.AddHours(1).ToString("yyyy-MM-ddTHH:mm:ss.000") + '",
+        "isOneTimeSchedule" : true,
+        "summary": "BizTalk Deploy",
+        "scheduleConfiguration": {
+            "recurrenceStartDate": "' + $DateTime.ToString("yyyyMMdd") + '",
+            "recurrenceEndDate": "' + $DateTime.AddHours(1).ToString("yyyyMMdd") + '",
+            "recurrenceStartTime": "' + $DateTime.ToString("HHmmss") + '",
+            "recurrenceEndTime": "' + $DateTime.AddHours(1).ToString("HHmmss") + '",
+            "isImmediate": false
+        },
+        "environmentIds": [
+          "' + $BizTalk360EnvironmentId + '"
+        ]
+      }
+    }'
+}
 ## Between BizTalk360 9.0 and 9.1 a breaking change was done in the API
-if ([Version]$BizTalk360Version -ge [Version]'9.1')
+elseif ([Version]$BizTalk360Version -ge [Version]'9.1')
 {
     $Request = '{
       "context": {
