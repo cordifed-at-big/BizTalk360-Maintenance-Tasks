@@ -36,7 +36,7 @@ if ([Version]$BizTalk360Version -ge [Version]'11.7')
             "recurrenceEndDate": "' + $DateTime.AddHours(1).ToString("yyyyMMdd") + '",
             "recurrenceStartTime": "' + $DateTime.ToString("HHmmss") + '",
             "recurrenceEndTime": "' + $DateTime.AddHours(1).ToString("HHmmss") + '",
-            "isImmediate": false
+            "isImmediate": true
         },
         "environmentIds": [
           "' + $BizTalk360EnvironmentId + '"
