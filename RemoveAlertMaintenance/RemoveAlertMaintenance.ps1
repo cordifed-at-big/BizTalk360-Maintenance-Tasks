@@ -10,7 +10,7 @@ param(
     [string]$MaintenanceId = ""
 )
 
-$MaintenanceLabel = "DevOps deployment of {0}, {1}, attempt {2}" -f $Env:BUILD_DEFINITIONNAME,$Env:BUILD_BUILDNUMBER,$Env:SYSTEM_JOBATTEMPT
+$MaintenanceLabel = "DevOps deployment of {0}, {1}, attempt {2}" -f $Env:BUILD_DEFINITIONNAME,$Env:BUILD_BUILDNUMBER,$Env:SYSTEM_STAGEATTEMPT
 
 $ResponseSet = Invoke-RestMethod -Uri "$BizTalk360ServerUrl/BizTalk360/Services.REST/AdminService.svc/GetBizTalk360Info" -Method Get -UseDefaultCredentials
 $ResponseSet | out-string

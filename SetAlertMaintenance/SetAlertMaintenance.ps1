@@ -7,7 +7,7 @@ param(
     [string]$BizTalk360ServerUrl
 )
 
-$MaintenanceLabel = "DevOps deployment of {0}, {1}, attempt {2}" -f $Env:BUILD_DEFINITIONNAME,$Env:BUILD_BUILDNUMBER,$Env:SYSTEM_JOBATTEMPT
+$MaintenanceLabel = "DevOps deployment of {0}, {1}, attempt {2}" -f $Env:BUILD_DEFINITIONNAME,$Env:BUILD_BUILDNUMBER,$Env:SYSTEM_STAGEATTEMPT
 
 $DateTime = Get-Date
 ##Don't know why it is localtime on 1 server and UTC on another.
