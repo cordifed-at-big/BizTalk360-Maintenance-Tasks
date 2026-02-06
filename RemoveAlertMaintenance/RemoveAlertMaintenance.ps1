@@ -38,21 +38,43 @@ If ($MaintenanceId -eq "")
        }
 }
 
-$Request = '{
-  "context": {
-       "callerReference": "AzureDevOps",
-       "environmentSettings": {
-         "id": "' + $BizTalk360EnvironmentId + '"
-       }
-  },
-  "maintenanceId": "' + $MaintenanceId + '",
-  "comment": "BizTalk Deploy"
+## Between BizTalk360 11.6 and 11.7 a breaking change was done in the API
+if ([Version]$BizTalk360Version -ge [Version]'11.7')
+{
+    $Request = '{
+    "environmentMaintenances": [
+        {
+            "maintenanceId": "' + $MaintenanceId + '",
+            "environmentIds": [
+                "' + $BizTalk360EnvironmentId + '"
+            ]
+        }
+    ],
+    "context": {
+        "callerReference": "AzureDevOps",
+        "environmentSettings": {
+            "id": "' + $BizTalk360EnvironmentId + '"
+        }
+    },
+    "comment": "BizTalk Deploy"
 }'
-
+}
+else
+{
+    $Request = '{
+      "context": {
+          "callerReference": "AzureDevOps",
+          "environmentSettings": {
+            "id": "' + $BizTalk360EnvironmentId + '"
+          }
+      },
+      "maintenanceId": "' + $MaintenanceId + '",
+      "comment": "BizTalk Deploy"
+    }'
+}
 Write-Host $Request
 
 $ResponseSet = Invoke-RestMethod -Uri "$BizTalk360ServerUrl/biztalk360/Services.REST/AlertService.svc/$StopOperation" -Method Post -ContentType "application/json" -Body $Request -UseDefaultCredentials
-$ResponseSet | out-string
 
 If ($ResponseSet.success)
 {
