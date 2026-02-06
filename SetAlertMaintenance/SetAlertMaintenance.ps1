@@ -12,6 +12,7 @@ $DateTime = Get-Date
 ##$DateTime = $DateTime.ToUniversalTime()
 
 $ResponseSet = Invoke-RestMethod -Uri "$BizTalk360ServerUrl/BizTalk360/Services.REST/AdminService.svc/GetBizTalk360Info" -Method Get -UseDefaultCredentials
+$ResponseSet | out-string
 $BizTalk360Version = $ResponseSet.bizTalk360Info.biztalk360Version
 
 ## Between BizTalk360 11.6 and 11.7 a breaking change was done in the API
