@@ -7,6 +7,8 @@ param(
     [string]$BizTalk360ServerUrl
 )
 
+$MaintenanceLabel = "DevOps deployment of {0}, {1}, attempt {2}" -f $Env:BUILD_DEFINITIONNAME,$Env:BUILD_BUILDNUMBER,$Env:SYSTEM_JOBATTEMPT
+
 $DateTime = Get-Date
 ##Don't know why it is localtime on 1 server and UTC on another.
 ##$DateTime = $DateTime.ToUniversalTime()
@@ -20,18 +22,18 @@ if ([Version]$BizTalk360Version -ge [Version]'11.7')
 {
     $Request = '{
       "context": {
-        "callerReference": "AzureDevOps",
+        "callerReference": "' + $MaintenanceLabel + '",
         "environmentSettings": {
           "id": "' + $BizTalk360EnvironmentId + '"
         }
       },
       "alertMaintenance": {
-        "name": "BizTalk Deploy",
-        "comment": "BizTalk Deploy",
+        "name": "' + $MaintenanceLabel + '",
+        "comment": "' + $MaintenanceLabel + '",
         "maintenanceStartTime": "' + $DateTime.ToString("yyyy-MM-ddTHH:mm:ss.000") + '",
         "expiryDateTime": "' + $DateTime.AddHours(1).ToString("yyyy-MM-ddTHH:mm:ss.000") + '",
         "isOneTimeSchedule" : true,
-        "summary": "BizTalk Deploy",
+        "summary": "' + $MaintenanceLabel + '",
         "scheduleConfiguration": {
             "recurrenceStartDate": "' + $DateTime.ToString("yyyyMMdd") + '",
             "recurrenceEndDate": "' + $DateTime.AddHours(1).ToString("yyyyMMdd") + '",
@@ -50,14 +52,14 @@ elseif ([Version]$BizTalk360Version -ge [Version]'9.1')
 {
     $Request = '{
       "context": {
-        "callerReference": "AzureDevOps",
+        "callerReference": "' + $MaintenanceLabel + '",
         "environmentSettings": {
           "id": "' + $BizTalk360EnvironmentId + '"
         }
       },
       "alertMaintenance": {
-        "name": "BizTalk Deploy",
-        "comment": "BizTalk Deploy",
+        "name": "' + $MaintenanceLabel + '",
+        "comment": "' + $MaintenanceLabel + '",
         "maintenanceStartTime": "' + $DateTime.ToString("yyyy-MM-ddTHH:mm:ss.000") + '",
         "expiryDateTime": "' + $DateTime.AddHours(1).ToString("yyyy-MM-ddTHH:mm:ss.000") + '",
         "isOneTimeSchedule" : true,
@@ -76,13 +78,13 @@ else
 {
     $Request = '{
       "context": {
-        "callerReference": "AzureDevOps",
+        "callerReference": "' + $MaintenanceLabel + '",
         "environmentSettings": {
           "id": "' + $BizTalk360EnvironmentId + '"
         }
       },
       "alertMaintenance": {
-        "comment": "BizTalk Deploy",
+        "comment": "' + $MaintenanceLabel + '",
         "maintenanceStartTime": "' + $DateTime.ToString("yyyy-MM-ddTHH:mm:ss.000") + '",
         "maintenanceTimeUnit": 0,
         "maintenanceTimeLength": 60,

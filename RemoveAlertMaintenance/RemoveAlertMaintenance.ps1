@@ -10,6 +10,8 @@ param(
     [string]$MaintenanceId = ""
 )
 
+$MaintenanceLabel = "DevOps deployment of {0}, {1}, attempt {2}" -f $Env:BUILD_DEFINITIONNAME,$Env:BUILD_BUILDNUMBER,$Env:SYSTEM_JOBATTEMPT
+
 $ResponseSet = Invoke-RestMethod -Uri "$BizTalk360ServerUrl/BizTalk360/Services.REST/AdminService.svc/GetBizTalk360Info" -Method Get -UseDefaultCredentials
 $ResponseSet | out-string
 $BizTalk360Version = $ResponseSet.bizTalk360Info.biztalk360Version
@@ -30,7 +32,7 @@ If ($MaintenanceId -eq "")
        $ResponseSet = Invoke-RestMethod -Uri "$BizTalk360ServerUrl/biztalk360/Services.REST/AlertService.svc/GetAlertMaintenance?environmentId=$BizTalk360EnvironmentId" -Method Get -UseDefaultCredentials
 	   $ResponseSet | out-string
 
-       $maintenance = @($ResponseSet.alertMaintenances | where { $_.comment -eq "BizTalk Deploy" })
+       $maintenance = @($ResponseSet.alertMaintenances | where { $_.comment -eq "$MaintenanceLabel" })
 
        If ($maintenance.Count -gt 0)
        {
@@ -51,25 +53,25 @@ if ([Version]$BizTalk360Version -ge [Version]'11.7')
         }
     ],
     "context": {
-        "callerReference": "AzureDevOps",
+        "callerReference": "' + $MaintenanceLabel + '",
         "environmentSettings": {
             "id": "' + $BizTalk360EnvironmentId + '"
         }
     },
-    "comment": "BizTalk Deploy"
+    "comment": "' + $MaintenanceLabel + '"
 }'
 }
 else
 {
     $Request = '{
       "context": {
-          "callerReference": "AzureDevOps",
+          "callerReference": "' + $MaintenanceLabel + '",
           "environmentSettings": {
             "id": "' + $BizTalk360EnvironmentId + '"
           }
       },
       "maintenanceId": "' + $MaintenanceId + '",
-      "comment": "BizTalk Deploy"
+      "comment": "' + $MaintenanceLabel + '"
     }'
 }
 Write-Host $Request
